@@ -1,3 +1,5 @@
+//time=0(n2)
+//space=0(n)
 
 class Solution {
     public void rotate(int[][] matrix) {
