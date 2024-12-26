@@ -1,24 +1,39 @@
 class Solution {
     public int findTargetSumWays(int[] nums, int target) {
-        return helper(nums, 0, 0, target);
-    }
-
-    public int helper(int[] nums, int index, int curSum, int target) {
-        // Base case: If we have considered all numbers
-        if (index == nums.length) {
-            // If the current sum equals the target, return 1, otherwise return 0
-            if (curSum == target) {
-                return 1;
-            } else {
-                return 0;
-            }
+        // Calculate the sum of all elements
+        int sum = 0;
+        for (int num : nums) {
+            sum += num;
         }
 
-        // Recursive case: Consider both adding and subtracting the current number
-        int left = helper(nums, index + 1, curSum + nums[index], target);  // Add current number
-        int right = helper(nums, index + 1, curSum - nums[index], target); // Subtract current number
+        // If the absolute target is greater than the total sum or the sum is not possible, return 0
+        if (Math.abs(target) > sum) {
+            return 0;
+        }
 
-        // Return the sum of both choices
-        return left + right;
+        // Create a DP array to store subproblem results
+        // dp[i][j] means the number of ways to achieve sum j at index i
+        int[][] dp = new int[nums.length + 1][2 * sum + 1];
+        
+        // Offset for handling negative sums, so sum can be stored in dp
+        int offset = sum;
+        
+        // Initialize the base case: There's one way to get sum 0 (do nothing)
+        dp[0][offset] = 1;
+        
+        // Fill the dp array
+        for (int i = 0; i < nums.length; i++) {
+            for (int curSum = -sum; curSum <= sum; curSum++) {
+                int dpIndex = curSum + offset;
+                if (dp[i][dpIndex] > 0) {
+                    // If we can reach the current sum at index i, update the next index for +nums[i] and -nums[i]
+                    dp[i + 1][dpIndex + nums[i]] += dp[i][dpIndex]; // Adding nums[i]
+                    dp[i + 1][dpIndex - nums[i]] += dp[i][dpIndex]; // Subtracting nums[i]
+                }
+            }
+        }
+        
+        // The answer is the number of ways to reach the target sum at the last index
+        return dp[nums.length][target + offset];
     }
 }
