@@ -11,34 +11,29 @@ class Solution {
             return 0;
         }
 
-        // Create a DP array to store subproblem results for the current sum
+        // Initialize a DP array to store the number of ways to reach a particular sum
         int[] dp = new int[2 * sum + 1];
-        
-        // Offset for handling negative sums, so sum can be stored in dp
-        int offset = sum;
-        
-        // Initialize the base case: There's one way to get sum 0 (do nothing)
-        dp[offset] = 1;
-        
-        // Fill the dp array
+        dp[sum] = 1;  // There's one way to make a sum of 0 (by doing nothing)
+
+        // Process each number in the input array
         for (int num : nums) {
-            // Create a new temporary array to store the updated dp results
+            // We will update the dp array in reverse order to avoid overwriting values that we still need to use
+            // Use a temporary array to store results for the current iteration
             int[] nextDp = new int[2 * sum + 1];
             
-            // For each possible sum, update the nextDp array
+            // Traverse the dp array and calculate new sums
             for (int curSum = -sum; curSum <= sum; curSum++) {
-                int dpIndex = curSum + offset;
-                if (dp[dpIndex] > 0) {
-                    nextDp[dpIndex + num] += dp[dpIndex]; // Adding num
-                    nextDp[dpIndex - num] += dp[dpIndex]; // Subtracting num
+                if (dp[curSum + sum] > 0) { // Check if current sum is achievable
+                    // Add the number to the current sum
+                    nextDp[curSum + num + sum] += dp[curSum + sum];
+                    // Subtract the number from the current sum
+                    nextDp[curSum - num + sum] += dp[curSum + sum];
                 }
             }
-            
-            // Move to the next iteration, set dp to nextDp
-            dp = nextDp;
+            dp = nextDp; // Move to the next dp array
         }
-        
-        // The answer is the number of ways to reach the target sum
-        return dp[target + offset];
+
+        // Return the number of ways to reach the target sum
+        return dp[target + sum];
     }
 }
