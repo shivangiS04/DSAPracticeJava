@@ -11,29 +11,34 @@ class Solution {
             return 0;
         }
 
-        // Create a DP array to store subproblem results
-        // dp[i][j] means the number of ways to achieve sum j at index i
-        int[][] dp = new int[nums.length + 1][2 * sum + 1];
+        // Create a DP array to store subproblem results for the current sum
+        int[] dp = new int[2 * sum + 1];
         
         // Offset for handling negative sums, so sum can be stored in dp
         int offset = sum;
         
         // Initialize the base case: There's one way to get sum 0 (do nothing)
-        dp[0][offset] = 1;
+        dp[offset] = 1;
         
         // Fill the dp array
-        for (int i = 0; i < nums.length; i++) {
+        for (int num : nums) {
+            // Create a new temporary array to store the updated dp results
+            int[] nextDp = new int[2 * sum + 1];
+            
+            // For each possible sum, update the nextDp array
             for (int curSum = -sum; curSum <= sum; curSum++) {
                 int dpIndex = curSum + offset;
-                if (dp[i][dpIndex] > 0) {
-                    // If we can reach the current sum at index i, update the next index for +nums[i] and -nums[i]
-                    dp[i + 1][dpIndex + nums[i]] += dp[i][dpIndex]; // Adding nums[i]
-                    dp[i + 1][dpIndex - nums[i]] += dp[i][dpIndex]; // Subtracting nums[i]
+                if (dp[dpIndex] > 0) {
+                    nextDp[dpIndex + num] += dp[dpIndex]; // Adding num
+                    nextDp[dpIndex - num] += dp[dpIndex]; // Subtracting num
                 }
             }
+            
+            // Move to the next iteration, set dp to nextDp
+            dp = nextDp;
         }
         
-        // The answer is the number of ways to reach the target sum at the last index
-        return dp[nums.length][target + offset];
+        // The answer is the number of ways to reach the target sum
+        return dp[target + offset];
     }
 }
