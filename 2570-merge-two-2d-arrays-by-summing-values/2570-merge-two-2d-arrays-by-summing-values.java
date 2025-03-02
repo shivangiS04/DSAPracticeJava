@@ -1,37 +1,26 @@
 class Solution {
     public int[][] mergeArrays(int[][] nums1, int[][] nums2) {
-        ArrayList<int[]> res = new ArrayList<>();
-        int n = nums1.length;
-        int m = nums2.length;
-        int i=0;
-        int j=0;
-        while(i<n && j<m){
-            if(nums1[i][0] == nums2[j][0]){
-                res.add(new int[]{nums1[i][0], nums1[i][1] + nums2[j][1] });
-                i++;
-                j++;
-            }else if(nums1[i][0] < nums2[j][0]){
-                res.add(new int[]{nums1[i][0], nums1[i][1]});
-                i++;
-            }else{
-                res.add(new int[]{nums2[j][0],nums2[j][1] });
-                j++;
-            }
-        }
-        while(i<n){
-            res.add(new int[]{nums1[i][0], nums1[i][1]});
-                i++;
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+
+        // Process nums1
+        for (int[] pair : nums1) {
+            map.put(pair[0], map.getOrDefault(pair[0], 0) + pair[1]);
         }
 
-        while(j<m){
-            res.add(new int[]{nums2[j][0],nums2[j][1] });
-                j++;
+        // Process nums2
+        for (int[] pair : nums2) {
+            map.put(pair[0], map.getOrDefault(pair[0], 0) + pair[1]);
         }
-        int len = res.size();
-        int result[][] = new int[len][2];
-        for(int ind=0;ind<len;ind++){
-            result[ind] = res.get(ind);
+
+        // Convert TreeMap to 2D array
+        int[][] result = new int[map.size()][2];
+        int index = 0;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            result[index][0] = entry.getKey();
+            result[index][1] = entry.getValue();
+            index++;
         }
+
         return result;
     }
 }
