@@ -1,27 +1,19 @@
 class Solution {
     public int numberOfSubstrings(String s) {
+        int count = 0;
+        int left = 0;
+        int[] freq = new int[3];
         int n = s.length();
-        int res = 0;
 
-        for(int i = 0; i < n; i++){
-            for(int j = i; j < n; j++){
-                if(check(s.substring(i, j + 1))) res++;
+        for (int right = 0; right < n; right++) {
+            freq[s.charAt(right) - 'a']++;
+
+            while (freq[0] > 0 && freq[1] > 0 && freq[2] > 0) {
+                count += n - right;
+                freq[s.charAt(left) - 'a']--;
+                left++;
             }
         }
-
-        return res;
-    }
-
-    boolean check(String s){
-        int a = 0, b = 0, c = 0;
-        for(char ch : s.toCharArray()){
-            if(ch == 'a') a++;
-            else if (ch == 'b') b++;
-            else if (ch == 'c') c++;
-
-            if(a > 0 && b > 0 && c > 0) return true;
-        }
-
-        return false;
+        return count;
     }
 }
