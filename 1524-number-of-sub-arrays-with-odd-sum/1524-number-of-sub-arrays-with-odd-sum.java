@@ -1,21 +1,7 @@
 class Solution {
     public int numOfSubarrays(int[] arr) {
-        int MOD = 1000000007;
-        int odd = 0, even = 1; 
-        int sum = 0, result = 0;
-
-        for (int num : arr) {
-            sum += num;
-
-            if (sum % 2 == 0) { 
-                result = (result + odd) % MOD; 
-                even++;
-            } else { 
-                result = (result + even) % MOD; 
-                odd++;
-            }
-        }
-
-        return result;
+        Arrays.parallelPrefix(arr, Integer::sum);  
+        long odd = Arrays.stream(arr).map(p -> p & 1).sum();  
+        return (int) (odd * (arr.length + 1 - odd) % 1_000_000_007);
     }
 }
